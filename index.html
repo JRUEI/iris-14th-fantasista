@@ -40,10 +40,10 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .cd span{border-left:1px solid var(--line);color:var(--gold)}
 .when{max-width:440px;margin:24px auto 0;text-align:left}
 .when div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 2px;border-top:1px solid var(--line)}
-.when dt{font:600 24px/1.4 "Cormorant Garamond","Noto Sans TC",sans-serif;font-variant-numeric:lining-nums}
+.when dt{font:600 22px/1.5 "Cormorant Garamond","Noto Sans TC",sans-serif}
 .when dt small{margin:0 4px;font:500 14px/1 "Noto Sans TC",sans-serif;color:var(--mut)}
 .when dd{margin:0;font-size:15px;color:var(--mut)}
-.when dd b{margin-right:6px;font:600 24px/1.4 "Cormorant Garamond","Noto Sans TC",sans-serif;font-variant-numeric:lining-nums;color:var(--tx)}
+.when dd b{margin-right:6px;font:600 22px/1.5 "Cormorant Garamond","Noto Sans TC",sans-serif;color:var(--tx)}
 .venue{max-width:440px;margin:0 auto 22px;padding:8px 2px 0;border-top:1px solid var(--line);text-align:left;font-size:14px;letter-spacing:.08em;color:var(--gold)}
 .cta{display:block;padding:15px;border-radius:12px;background:var(--gold);color:oklch(0.22 0.05 290);font-size:18px;font-weight:700;text-decoration:none}
 .cta:hover{filter:brightness(1.08)}
@@ -51,7 +51,7 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .acc>details+details{border-top:1px solid var(--line)}
 .acc>details>summary{display:flex;align-items:center;gap:14px;padding:13px 18px;font-weight:600}
 .acc>details>summary:hover{background:var(--bg3)}
-.acc .n{min-width:22px;font:600 16px/1 "Cormorant Garamond","Noto Sans TC",sans-serif;font-variant-numeric:lining-nums;color:var(--gold)}
+.acc .n{min-width:.92em;font:600 64px/1 "Cormorant Garamond","Noto Sans TC",sans-serif;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1.5px var(--gold)}
 .acc .bd{padding:0 18px 16px}
 .acc .ft{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;border-top:1px solid var(--line)}
 .btn{display:block;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg2);color:var(--tx);text-align:center;font-size:14px;text-decoration:none}
@@ -85,7 +85,7 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .qa details{border:1px solid var(--line);border-radius:10px;background:var(--bg2)}
 .qa summary{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;font-weight:600;font-size:15.5px}
 .qa summary:hover{background:var(--bg3)}
-.qn{flex:none;min-width:34px;font:600 17px/1.4 "Cormorant Garamond","Noto Sans TC",sans-serif;font-variant-numeric:lining-nums;color:var(--lav)}
+.qn{flex:none;min-width:40px;font:600 20px/1.4 "Cormorant Garamond","Noto Sans TC",sans-serif;color:var(--lav)}
 .qa .a{padding:2px 14px 10px;border-top:1px dashed var(--line);font-size:15px;color:oklch(0.9 0.015 300)}
 .pk{padding:10px 0;border-top:1px dashed var(--line)}
 .pk:first-child{border-top:0}
@@ -281,6 +281,8 @@ html:has(#o-tm:checked) .tm{display:flex}
   .mg iframe,.mg .yl{width:min(100%,220px);margin:0 auto}
   .cd{font-size:26px}
   .cd b,.cd span{padding:0 16px}
+  .when dt,.when dd b{font-size:19px}
+  .acc .n{font-size:48px}
   .gg{grid-template-columns:repeat(2,minmax(0,1fr))}
   .bn{grid-template-columns:minmax(0,1fr)}
 }
