@@ -26,7 +26,7 @@ details>summary::after{content:"";flex:none;margin-left:auto;width:9px;height:9p
 details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 
 /* home */
-#home{position:relative;isolation:isolate;overflow:hidden}
+#home{position:relative;isolation:isolate;overflow:clip}  /* clip, not hidden: hidden would stop the accordion titles from sticking */
 .beams{position:absolute;inset:0 0 auto;height:600px;z-index:-1;display:flex;justify-content:center;pointer-events:none;opacity:.35}
 .beams i{flex:1;max-width:260px;background:linear-gradient(to bottom,color-mix(in oklab,var(--c) 55%,transparent),transparent 85%);filter:blur(30px)}
 .home{max-width:620px;margin:0 auto;padding:32px 16px 28px;text-align:center}
@@ -45,14 +45,15 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .when dd{margin:0;font-size:15px;color:var(--mut)}
 .when dd b{margin-right:6px;font:600 22px/1.5 "Cormorant Garamond","Noto Sans TC",sans-serif;color:var(--tx)}
 .venue{max-width:440px;margin:0 auto 22px;padding:8px 2px 0;border-top:1px solid var(--line);text-align:left;font-size:14px;letter-spacing:.08em;color:var(--gold)}
-.cta{display:block;padding:15px;border-radius:12px;background:var(--gold);color:oklch(0.22 0.05 290);font-size:18px;font-weight:700;text-decoration:none}
+.cta{display:block;padding:12px;border-radius:12px;background:var(--gold);color:oklch(0.22 0.05 290);font-size:17px;font-weight:700;text-decoration:none}
 .cta:hover{filter:brightness(1.08)}
-.acc{margin-top:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:oklch(0.17 0.045 290/.92)}
+.acc{margin-top:10px;text-align:left;border:1px solid var(--line);border-radius:12px;background:oklch(0.17 0.045 290/.92)}
 .acc>details+details{border-top:1px solid var(--line)}
-.acc>details>summary{display:flex;align-items:center;gap:14px;padding:13px 18px;font-weight:600}
+.acc>details>summary{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:15px;font-weight:600}
+.acc>details[open]>summary{position:sticky;top:0;z-index:5;background:oklch(0.19 0.05 290);border-bottom:1px solid var(--line);box-shadow:0 6px 12px -8px #000}
 .acc>details>summary:hover{background:var(--bg3)}
-.acc .n{min-width:.92em;font:600 64px/1 "Cormorant Garamond","Noto Sans TC",sans-serif;letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums;color:transparent;-webkit-text-stroke:1.5px var(--gold)}
-.acc .bd{padding:0 18px 16px}
+.acc .n{min-width:.92em;font:600 32px/1 "Cormorant Garamond","Noto Sans TC",sans-serif;letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums;color:transparent;-webkit-text-stroke:1px var(--gold)}
+.acc .bd{padding:12px 16px 16px}
 .acc .ft{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;border-top:1px solid var(--line)}
 .btn{display:block;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg2);color:var(--tx);text-align:center;font-size:14px;text-decoration:none}
 .btn:hover{background:var(--bg3)}
@@ -105,7 +106,7 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .songs .sl a{color:var(--lav);font-weight:600;text-decoration:none;white-space:nowrap}
 .songs .sl a:hover{text-decoration:underline}
 .songs .sl .cl{padding:0 10px;border:1px solid var(--strong);border-radius:999px;background:var(--bg3);color:var(--tx)}
-.dl{display:block;margin-top:8px;padding:9px 12px;border:1px solid color-mix(in oklab,var(--gold) 55%,transparent);border-radius:12px;color:var(--gold);font-size:14.5px;font-weight:600;text-decoration:none}
+.dl{display:block;margin-top:10px;padding:10px 12px;border:1px solid color-mix(in oklab,var(--gold) 55%,transparent);border-radius:12px;color:var(--gold);font-size:14.5px;font-weight:600;text-decoration:none}
 .dl:hover{background:var(--bg3)}
 .bn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
 .bn div{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2)}
@@ -299,7 +300,6 @@ html:has(#o-tm:checked) .tm{display:flex}
   .cd{font-size:26px}
   .cd b,.cd span{padding:0 16px}
   .when dt,.when dd b{font-size:19px}
-  .acc .n{font-size:48px}
   .gg{grid-template-columns:repeat(2,minmax(0,1fr))}
   .bn{grid-template-columns:minmax(0,1fr)}
 }
