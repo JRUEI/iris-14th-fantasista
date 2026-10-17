@@ -213,6 +213,8 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .d-c{display:grid;gap:6px;margin:0;padding:0;list-style:none;align-content:start}
 .d-c li{display:grid;grid-template-columns:35px minmax(0,1fr);align-items:start;gap:6px;padding:4px 8px 5px 6px;border-radius:8px;background:color-mix(in oklab,var(--yc) 9%,transparent);cursor:pointer;transition:opacity .2s}
 .d-l .ty{height:20px;min-width:20px;margin:0 3px;padding:0 5px;font-size:11.5px;vertical-align:2px}
+.ty:has(sub){display:inline-flex;align-items:center;justify-content:center;gap:1px}
+.ty sub{position:relative;top:2px;font-size:9.5px;line-height:1}
 .d-c li .ty{justify-self:center;margin-top:1px}  /* badge column = the MIX badge, so every call text starts at one x */
 .d-c b{display:block;font:600 15.5px/1.5 "Noto Sans TC","Yu Gothic","Meiryo","Microsoft JhengHei",sans-serif;color:var(--yc);overflow-wrap:anywhere}
 .d-c .z{font-size:13.5px}
@@ -461,6 +463,10 @@ function draw(){
     for(i=0;i<=d.j.length;i++){pr=null;gp=d.p&&d.p.indexOf(i)>=0;
       for(;k<R.length&&R[k][0]==i&&!R[k][1];k++)if(!s.tk[k][0])tok(k);else tok(k,pr=pr||row(!i?'（第一句歌詞之前）':i<d.j.length?'（下一句歌詞之前）':'（最後一句歌詞之後）'));
       if(i<d.j.length)line(i)}}
+  // same type twice in one row: number those badges (名1 名2) in the cards and the lyric; inline badges and card badges share order (notes have neither)
+  tl.querySelectorAll('.d-r').forEach(function(r){var b=r.querySelectorAll('.d-c li>.ty'),m=r.querySelectorAll('.d-l .ty'),n={},c={};
+    b.forEach(function(x){n[x.textContent]=(n[x.textContent]||0)+1});
+    b.forEach(function(x,i){var t=x.textContent,u;if(n[t]<2)return;u='<sub>'+(c[t]=(c[t]||0)+1)+'</sub>';x.insertAdjacentHTML('beforeend',u);if(m[i])m[i].insertAdjacentHTML('beforeend',u)})});
   nc=cl.length;nl=ly.length;lines=cl.concat(ly);AT=at.concat(ly.map(function(){return null}));
   q=[].slice.call(tl.querySelectorAll('.d-r,.d-c li'));rk=lines.map(function(l){return q.indexOf(l)});
   lines.forEach(function(l){l.tabIndex=0});
