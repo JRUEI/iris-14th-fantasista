@@ -211,8 +211,8 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .d-pre{font-size:14px;line-height:1.6;color:var(--mut)}
 .d-m{display:inline-grid;place-items:center;width:18px;height:18px;margin:0 3px;border-radius:50%;background:var(--yc);color:var(--bg);font:700 11px/1 "Noto Sans TC",sans-serif;vertical-align:2px}
 .d-c{display:grid;gap:6px;margin:0;padding:0;list-style:none;align-content:start}
-.d-c li{display:grid;grid-template-columns:18px 35px minmax(0,1fr);align-items:start;gap:6px;padding:4px 8px 5px 6px;border-radius:8px;background:color-mix(in oklab,var(--yc) 9%,transparent);cursor:pointer;transition:opacity .2s}
-.d-c li .d-m{margin:3px 0 0}
+.d-c li{display:grid;grid-template-columns:35px minmax(0,1fr);align-items:start;gap:6px;padding:4px 8px 5px 6px;border-radius:8px;background:color-mix(in oklab,var(--yc) 9%,transparent);cursor:pointer;transition:opacity .2s}
+.d-l .ty{height:20px;min-width:20px;margin:0 3px;padding:0 5px;font-size:11.5px;vertical-align:2px}
 .d-c li .ty{justify-self:center;margin-top:1px}  /* badge column = the MIX badge, so every call text starts at one x */
 .d-c b{display:block;font:600 15.5px/1.5 "Noto Sans TC","Yu Gothic","Meiryo","Microsoft JhengHei",sans-serif;color:var(--yc);overflow-wrap:anywhere}
 .d-c .z{font-size:13.5px}
@@ -221,7 +221,6 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .d-m.note,.d-c .note{--yc:var(--mut)}
 .d-c .note b{font-weight:400;font-size:14.5px}
 .d-c.solo{margin:4px 8px;padding:6px 0}
-.d-c.solo li{grid-template-columns:35px minmax(0,1fr)}
 .d-r.on,.d-c li.on{background:var(--bg3);box-shadow:inset 3px 0 0 var(--gold)}
 .d-r.past>.d-l,.d-c li.past{opacity:.5}
 .d-r.mk,.d-c li.mk{outline:2px dashed var(--gold);outline-offset:-2px}
@@ -437,9 +436,8 @@ function place(d){
   return {R:R,h:h,P:P,hit:hit};
 }
 // timeline = the wiki's sections and calls in its order. With lyrics (LY, kept in the viewer's browser only): one row per lyric line,
-// its calls listed beside it and marked ①② at their spot in the line; calls at a section's start, before its first line, get a row of their own.
+// its calls listed under it, each marked by its type badge at its spot in the line; calls at a section's start, before its first line, get a row of their own.
 // lines = calls, then lyric rows.
-function ci(i,c){return '<span class="d-m'+(c?' '+c:'')+'">'+(i<20?String.fromCharCode(9312+i):i+1)+'</span>'}
 // NetEase translations are Simplified: show them as Traditional with Taiwan wording (OpenCC cn -> twp), loaded on first need
 var CV=null,CVL=0;
 function tw(s){if(s&&!CV&&!CVL){CVL=1;var e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js';
@@ -453,10 +451,10 @@ function draw(){
   function pos(r){var n=Array.from(d.j[Math.min(r[0],d.j.length-1)]).length;return r[1]==0?['b',r[0],0,'b'+r[0]]:r[1]==Infinity?['b',r[0]+1,0,'b'+(r[0]+1)]:['m',r[0],r[1]/n,'m'+r[0]+','+r[1]]}
   function tok(k,r){var o;if(!s.tk[k][0]){tl.insertAdjacentHTML('beforeend',s.th[k]);grp();pr=null;gp=0;return}
     if(!g)grp();o=r?r.lastChild:g;o.insertAdjacentHTML('beforeend',s.th[k]);cl.push(o.lastChild);if(!r)return;
-    o.lastChild.insertAdjacentHTML('afterbegin',ci(o.children.length-1));at.push(pos(R[k]));return o.lastChild}
+    at.push(pos(R[k]));return o.lastChild}
   function line(i){var a=Array.from(d.j[i]),r=row(),j=document.createElement('p'),z=document.createElement('p'),o=0,e,c;ly.push(r);j.lang='ja';z.className='z';
     for(;k<R.length&&R[k][0]==i;k++){if(!s.tk[k][0]){tok(k);continue}  // ponytail: sections snap to line starts, so none lands mid-line now; one that did would head the next row
-      e=Math.min(R[k][1],a.length);j.append(a.slice(o,e).join(''));o=e;c=tok(k,r);j.insertAdjacentHTML('beforeend',ci(r.lastChild.children.length-1,c.className))}
+      e=Math.min(R[k][1],a.length);j.append(a.slice(o,e).join(''));o=e;c=tok(k,r);j.insertAdjacentHTML('beforeend',(c.querySelector('.ty')||{outerHTML:'<span class="d-m note">•</span>'}).outerHTML)}
     j.append(a.slice(o).join(''));z.textContent=tw(d.z[i]);r.firstChild.append(j,z)}
   if(!d)s.tk.forEach(function(_,k){tok(k)});
   else{R=place(d);HT=R.h;R=R.R;
