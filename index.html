@@ -201,7 +201,7 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .sec:focus-visible,.d-r:focus-visible,.d-c li:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 .sec:not(:has(small)):has(+.lns:empty){display:none}
 .lns{margin:0;padding:4px 0}
-.d-r{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:4px 16px;margin:4px 8px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .15s}
+.d-r{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 16px;margin:4px 8px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .15s}
 .d-r:hover{background:var(--bg2)}
 .d-r.gap{margin-top:20px}
 .d-l p,.d-c p{margin:0}
@@ -216,6 +216,7 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .d-c li .ty{justify-self:center;margin-top:1px}  /* badge column = the MIX badge, so every call text starts at one x */
 .d-c b{display:block;font:600 15.5px/1.5 "Noto Sans TC","Yu Gothic","Meiryo","Microsoft JhengHei",sans-serif;color:var(--yc);overflow-wrap:anywhere}
 .d-c .z{font-size:13.5px}
+.d-r .d-c{margin-top:4px;padding-left:10px}
 .d-c:empty{display:none}
 .d-m.note,.d-c .note{--yc:var(--mut)}
 .d-c .note b{font-weight:400;font-size:14.5px}
@@ -268,10 +269,6 @@ html:has(#o-tm:checked) .tm{display:flex}
 #tm-mk{background:var(--gold);border-color:var(--gold);color:var(--bg)}
 #tm-mk kbd{margin-left:6px;font:500 12px/1 "Noto Sans TC",sans-serif;opacity:.75}
 
-@media (max-width:600px){
-  .d-r{grid-template-columns:minmax(0,1fr)}
-  .d-r .d-c{padding-left:10px;border-left:2px solid var(--line)}
-}
 @media (max-width:900px){
   .svh{gap:8px;padding:0 10px}
   .svh h2 small{display:none}
