@@ -258,6 +258,10 @@ html:has(#o-jp:not(:checked)) #s-tl [lang=ja]:not(.both){display:none}
 html:has(#o-zh:not(:checked)) #s-tl .z,html:has(#o-zh:not(:checked)) #sub .z,html:has(#o-jp:not(:checked)) #sub .j{display:none}
 html:has(#o-lg:checked) .d-l p[lang],html:has(#o-lg:checked) .d-c b{font-size:21px}
 html:has(#o-lg:checked) #s-tl .z{font-size:17px}
+#s-tl rt{font-size:.6em;font-weight:400;color:var(--mut)}
+#s-tl ruby>span{display:inline-block;line-height:1.2}  /* kanji stay together; a longer reading overhangs both sides instead of spacing them apart */
+html:has(#o-rb:checked) .d-l p[lang]{line-height:2.2}
+html:has(#o-rb:not(:checked)) #s-tl rt{display:none}
 .tb{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;display:flex;gap:6px;padding:6px;border-radius:14px;background:oklch(0.19 0.05 290/.97);border:1px solid var(--strong);box-shadow:0 10px 30px oklch(0 0 0/.45)}
 .tb label,.tb select{display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:10px;background:var(--bg3);color:var(--tx);font:600 14px/1 "Noto Sans TC","Microsoft JhengHei",sans-serif;white-space:nowrap;cursor:pointer}
 .tb select{border:0}
@@ -341,7 +345,7 @@ html:has(#o-tm:checked) .tm{display:flex}
 <div class="svr" id="s-tl"></div></div>
 <div class="tm" role="group" aria-label="對時"><span id="tm-st"></span><button id="tm-mk" type="button">標記<kbd>Space</kbd></button><button id="tm-un" type="button">復原</button><button id="tm-ex" type="button">匯出</button><button id="tm-rs" type="button">重設本曲</button></div>
 <div class="tb" role="group" aria-label="播放與顯示設定"><select id="spd" aria-label="播放速度"><option value="0.5">x0.5</option><option value="0.75">x0.75</option><option value="1" selected>x1</option><option value="1.25">x1.25</option><option value="1.5">x1.5</option><option value="2">x2</option></select>
-<label><input type="checkbox" id="o-jp" checked>日文</label><label><input type="checkbox" id="o-zh" checked>中文</label><label><input type="checkbox" id="o-lg">大字</label>
+<label><input type="checkbox" id="o-jp" checked>日文</label><label><input type="checkbox" id="o-zh" checked>中文</label><label><input type="checkbox" id="o-lg">大字</label><label><input type="checkbox" id="o-rb">假名</label>
 <label><input type="checkbox" id="o-as" checked>自動捲動</label><label><input type="checkbox" id="o-tm">對時</label></div></div>
 <dialog id="ly-d" class="dlg" aria-labelledby="ly-h"><h3 id="ly-h">歌詞</h3>
 <p>搜尋 LRCLIB／網易雲，或讀入 LRC、TXT 檔，也可以直接貼上。歌詞只存在這台裝置的瀏覽器，不會上傳。帶 <code>[01:23.45]</code> 時間碼的 LRC 會自動對時；MV 前奏長短不同時，打開「對時」重標第一句，整首會跟著平移。</p>
@@ -447,6 +451,23 @@ var CV=null,CVL=0;
 function tw(s){if(s&&!CV&&!CVL){CVL=1;var e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js';
   e.onload=function(){CV=OpenCC.Converter({from:'cn',to:'twp'});draw()};e.onerror=function(){CV=String;draw()};document.head.append(e)}
   return s&&CV?CV(s):''}
+// 假名: kuromoji tokenizes each lyric line in the browser (its ~18MB dictionary comes from jsDelivr on the first tick, then sits in the browser cache); kanji get <ruby> hiragana
+var KT=null,KW=0;
+function hira(s){return s.replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96)})}
+function ruby(){var o=$('#o-rb'),l=o.parentNode.lastChild;if(!o.checked)return;
+  if(!KT){if(!KW){KW=1;l.data='假名（字典下載中）';var e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
+    e.onload=function(){kuromoji.builder({dicPath:'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/'}).build(function(x,t){KW=0;if(x){o.checked=false;l.data='假名（載入失敗）';return}KT=t;l.data='假名';ruby()})};
+    e.onerror=function(){KW=0;o.checked=false;l.data='假名（載入失敗）'};document.head.append(e)}return}
+  $('#s-tl').querySelectorAll('.d-l p[lang=ja]:not([data-rb])').forEach(function(p){p.dataset.rb=1;
+    Array.from(p.childNodes).forEach(function(n){if(n.nodeType!=3||!/\p{sc=Han}/u.test(n.data))return;var f=document.createDocumentFragment();
+      KT.tokenize(n.data).forEach(function(t){var w=t.surface_form,r=hira(t.reading||''),p=hira(w).split(/(\p{sc=Han}+)/u),i=0,m;
+        if(p.length<2||!/^[ぁ-ゖー]+$/.test(r)){f.append(w);return}
+        m=r.match(new RegExp('^'+p.map(function(x,k){return k%2?'(.+?)':x.replace(/[^ぁ-ゖー]/g,'.')}).join('')+'$'));  // kana in the word pins the reading, so only kanji runs get ruby
+        if(!m){p=['',w,''];m=[0,r]}
+        p.forEach(function(x,k){var c=w.substr(i,x.length),y,z,b;i+=x.length;if(!(k%2)){f.append(c);return}
+          y=document.createElement('ruby');z=document.createElement('rt');b=document.createElement('span');b.append(c);z.textContent=m[(k+1)/2];y.append(b,z);f.append(y)})});
+      n.replaceWith(f)})})}
+$('#o-rb').addEventListener('change',ruby);
 function draw(){
   var s=S[cur-1],tl=$('#s-tl'),d=LY[cur],g=null,pr=null,gp=0,cl=[],ly=[],at=[],R=[],k=0,i,q;SB=-2;HT=0;$('#sub').hidden=true;tl.innerHTML='';tl.scrollTop=0;
   function grp(){g=document.createElement(d?'div':'ol');g.className=d?'lns':'lns d-c solo';tl.appendChild(g)}
@@ -475,7 +496,7 @@ function draw(){
   $('#cc-no').textContent=d&&d.t.some(function(x){return x!=null})?'沒有官方字幕，影片上改顯示歌詞':'這首只有 YT Music 版，沒有字幕';
   $('#ly-o').textContent=d?'編輯歌詞':'加入歌詞';$('#s-src').hidden=!(d&&SN[d.src]);
   if(d&&SN[d.src])$('#s-src').textContent='歌詞來源：'+SN[d.src]+(d.id?' #'+d.id:'')+(d.title?'・'+d.title+(d.artist?' — '+d.artist:''):'');
-  setTimes();
+  setTimes();ruby();
 }
 function setTimes(){
   var o=LO[cur]&&LO[cur].length==nc?LO[cur]:BK[cur]&&BK[cur].length==nc?BK[cur]:[],u=LY[cur]?LY[cur].t:[];  // marks saved for an older call list don't fit: drop
