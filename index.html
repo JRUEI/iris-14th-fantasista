@@ -172,8 +172,9 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .svh nav .rb{width:44px;height:44px;border:0;background:none}
 .svh nav .rb:hover{background:oklch(1 0 0/.06)}
 .rb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.svh h2{margin:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 17px/1.3 "Noto Sans TC","Microsoft JhengHei",sans-serif}
-.svh h2 .rl{display:block;overflow:hidden;text-overflow:ellipsis;margin-top:5px;font-size:12.5px;font-weight:400;line-height:1.35;color:var(--mut)}
+.svh h2{margin:0;padding-bottom:2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 17px/1.3 "Noto Sans TC","Microsoft JhengHei",sans-serif}
+/* padding-bottom: Noto CJK ink sits ~1px low in its line box; measured on screenshots */
+.svh h2 .rl{display:block;overflow:hidden;text-overflow:ellipsis;margin-top:5px;font-size:12.5px;font-weight:400;line-height:1.2;color:var(--mut)}
 .svh h2 .n{margin-right:8px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
 .svh h2 small{margin-left:8px;font-size:13px;font-weight:400;color:var(--mut)}
 .svb{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:0 28px;max-width:1440px;height:calc(100vh - 88px);margin:0 auto;padding:0 24px}
