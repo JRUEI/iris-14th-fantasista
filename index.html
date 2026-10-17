@@ -35,9 +35,12 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 .eyebrow{margin:0;font:600 16px/1.6 "Cormorant Garamond","Noto Sans TC",sans-serif;letter-spacing:.2em;font-variant-numeric:lining-nums;color:var(--gold)}
 .home h1{margin:0;font:600 clamp(44px,11vw,70px)/1.1 "Cormorant Garamond","Noto Sans TC",sans-serif;letter-spacing:.04em;color:var(--gold)}
 .hsub{margin:6px 0 22px;font-size:15px;letter-spacing:.12em;color:var(--mut)}
-.cd{display:inline-flex;align-items:center;margin:0;padding:10px 0;border-radius:12px;background:oklch(0.11 0.035 290);border:1px solid var(--line);font:700 32px/1.2 "Noto Sans TC",sans-serif;font-variant-numeric:tabular-nums lining-nums}
-.cd b,.cd span{padding:0 22px}
-.cd span{border-left:1px solid var(--line);color:var(--gold)}
+.cd{display:flex;justify-content:center;align-items:flex-start;gap:0 clamp(4px,1.6vw,16px);margin:0}
+.cd div{display:grid;justify-items:center;gap:6px}
+.cd b,.cd i{font:600 clamp(22px,7.6vw,46px)/1 "Noto Sans TC",sans-serif;font-style:normal;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.08em;color:#fff}
+.cd b,.cd i{padding-left:.08em}
+.cd i{color:var(--mut)}
+.cd small{font:600 clamp(8.5px,2.6vw,11px)/1 "Noto Sans TC",sans-serif;letter-spacing:.14em;color:var(--mut);display:flex;justify-content:center;width:0;white-space:nowrap;position:relative;left:.07em}  /* zero-width label: units size to their digits, so the colons sit mid-gap */
 .when{max-width:440px;margin:24px auto 0;text-align:left}
 .when div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 2px;border-top:1px solid var(--line)}
 .when dt{font:600 22px/1.5 "Cormorant Garamond","Noto Sans TC",sans-serif}
@@ -299,8 +302,6 @@ html:has(#o-tm:checked) .tm{display:flex}
 @media (max-width:600px){
   .mg{grid-template-columns:minmax(0,1fr)}
   .mg iframe,.mg .yl{width:min(100%,220px);margin:0 auto}
-  .cd{font-size:26px}
-  .cd b,.cd span{padding:0 16px}
   .when dt,.when dd b{font-size:19px}
   .gg{grid-template-columns:repeat(2,minmax(0,1fr))}
   .bn{grid-template-columns:minmax(0,1fr)}
@@ -309,7 +310,7 @@ html:has(#o-tm:checked) .tm{display:flex}
 <div class="view" id="home"><div class="beams"><i style="--c:#07d34f"></i><i style="--c:#0074e8"></i><i style="--c:#9d4dee"></i><i style="--c:#ff0000"></i><i style="--c:#ff6c35"></i></div><main class="home">
 <figure class="poster"><img src="poster.jpg" width="944" height="530" alt="i☆Ris 14th Anniversary Live ～FANTASISTA～ 宣傳圖"></figure>
 <p class="eyebrow">i☆Ris 14th Anniversary Live</p><h1>FANTASISTA</h1><p class="hsub">預習支援・非官方粉絲整理</p>
-<p class="cd" aria-label="距離開演"><b id="cd-d">D-</b><span id="cd-t">000:00:00</span></p>
+<div class="cd" role="timer" aria-label="距離開演"><div><b>00</b><small>MONTHS</small></div><i>:</i><div><b>00</b><small>DAYS</small></div><i>:</i><div><b>00</b><small>HOURS</small></div><i>:</i><div><b>00</b><small>MINUTES</small></div><i>:</i><div><b>00</b><small>SECONDS</small></div></div>
 <dl class="when"><div><dt>2026.11.03<small>週二・祝日</small></dt><dd><b>18:00</b>開演</dd></div></dl>
 <p class="venue">橫濱 Arena（横浜アリーナ）・17:00 開場・JST 日本時間</p>
 <a class="cta" href="#/guide">應援指南 · 25 首</a>
@@ -698,10 +699,10 @@ $('#q').addEventListener('input',function(){var q=this.value.trim().toLowerCase(
 if(FILE)document.querySelectorAll('iframe[data-v]').forEach(function(f){var a=document.createElement('a');
   a.className='yl';a.href='https://www.youtube.com/watch?v='+f.dataset.v;a.target='_blank';a.textContent='在 YouTube 開啟 ↗';f.replaceWith(a)});
 var T0=Date.parse('2026-11-03T18:00:00+09:00');
-function cd(){var d=Math.floor((T0-Date.now())/1000),h=Math.floor(d/3600);
-  if(d<=0){$('#cd-d').textContent='D-DAY';$('#cd-t').textContent='開演';return}
-  $('#cd-d').textContent='D-'+Math.floor(h/24);
-  $('#cd-t').textContent=String(h).padStart(3,'0')+':'+String(Math.floor(d/60)%60).padStart(2,'0')+':'+String(d%60).padStart(2,'0')}
+function cd(){var n=new Date(),m=0,x,d;  // whole calendar months first, the rest as days / h / m / s
+  while(x=new Date(n),x.setMonth(x.getMonth()+m+1),x<=T0)m++;
+  x=new Date(n);x.setMonth(x.getMonth()+m);d=Math.max(0,Math.floor((T0-x)/1000));
+  [m,Math.floor(d/86400),Math.floor(d/3600)%24,Math.floor(d/60)%60,d%60].forEach(function(v,i){document.querySelectorAll('.cd b')[i].textContent=String(v).padStart(2,'0')})}
 cd();setInterval(cd,1000);
 // one section open at a time (name=acc); closing a long one above would leave the new one off-screen, so bring its title back
 document.querySelectorAll('.acc>details').forEach(function(d){d.addEventListener('toggle',function(){if(d.open&&d.getBoundingClientRect().top<0)d.scrollIntoView()})});
