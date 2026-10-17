@@ -167,6 +167,7 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 
 /* song page */
 .svh{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:12px;height:88px;padding:0 20px;background:oklch(0.15 0.045 290/.95);border-bottom:1px solid var(--line)}
+@media(min-width:860px){.svh{grid-template-columns:42px minmax(0,1fr) 42px}}  /* empty right column balances the back button, so the pill centres on the page */
 .svh nav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:68px;max-width:760px;width:100%;margin:0 auto;padding:0 6px;border-radius:999px;background:linear-gradient(var(--bg3),var(--bg2));border:1px solid var(--line)}
 .svh nav .rb{width:44px;height:44px;border:0;background:none}
 .svh nav .rb:hover{background:oklch(1 0 0/.06)}
