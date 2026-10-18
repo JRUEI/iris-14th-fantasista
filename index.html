@@ -237,10 +237,17 @@ footer{max-width:620px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid
 .v-tab-btn{flex:1;padding:7px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--mut);font:600 13px/1 "Noto Sans TC",sans-serif;cursor:pointer;transition:all .15s}
 .v-tab-btn:hover{background:var(--bg3);color:var(--tx)}
 .v-tab-btn.active{background:var(--bg3);border-color:var(--gold);color:var(--tx);box-shadow:inset 0 0 0 1px var(--gold)}
-.v-tab-btn.active#v-tab-bili{border-color:var(--t3c);box-shadow:inset 0 0 0 1px var(--t3c)}
 .v-ofs{font-size:12px;color:var(--mut);padding:0 8px;border-left:1px solid var(--line);white-space:nowrap}
 .vid iframe#bili-p{position:absolute;inset:0;width:100%;height:100%;border:0}
-.d-c .z{font-size:13.5px}
+.b-sync{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:8px 0;background:var(--bg2);border:1px solid var(--line);border-radius:10px;font-size:14px;flex-wrap:wrap}
+.b-sync[hidden]{display:none}
+.b-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:500;color:var(--tx);user-select:none}
+.b-toggle input{cursor:pointer;accent-color:var(--gold)}
+.b-btn{padding:5px 12px;border-radius:6px;background:var(--bg3);border:1px solid var(--line);color:var(--tx);font:600 13px/1 "Noto Sans TC",sans-serif;cursor:pointer;transition:all .15s}
+.b-btn:hover{background:var(--line)}
+.b-btn.active{background:oklch(0.7 0.18 20);border-color:oklch(0.7 0.18 20);color:#fff}
+.b-time{font-family:monospace;font-size:14px;color:var(--gold);min-width:44px;font-variant-numeric:tabular-nums}
+.b-tip{color:var(--mut);font-size:12px}
 .d-r .d-c{margin-top:4px;padding-left:10px}
 .d-c:empty{display:none}
 .d-m.note,.d-c .note{--yc:var(--mut)}
@@ -367,6 +374,7 @@ html:has(#o-tm:checked) .tm{display:flex}
 <div class="vid"><div id="yt"></div><iframe id="bili-p" allowfullscreen hidden></iframe><div id="sub" hidden><span class="j" lang="ja"></span><span class="z"></span></div><a class="fb" id="s-fb" target="_blank" rel="noopener" hidden><span>這個網址無法內嵌播放 · 在 YouTube 開啟 ↗</span></a></div>
 <div class="vbar"><select id="cc" aria-label="影片字幕"><option value="ja">日文字幕</option><option value="zh">中文字幕（自動翻譯）</option><option value="off">關閉字幕</option></select><span id="cc-no">這首只有 YT Music 版，沒有字幕</span>
 <button id="ly-o" type="button">加入歌詞</button><a id="s-yt" target="_blank" rel="noopener">在 YouTube 觀看 ↗</a></div>
+<div class="b-sync" id="b-sync" hidden><label class="b-toggle"><input type="checkbox" id="b-sync-on" checked><span>字幕同步</span></label><button type="button" id="b-sync-btn" class="b-btn">▶ 開始同步</button><button type="button" id="b-sync-rst" class="b-btn">↺ 重頭</button><span class="b-time" id="b-sync-time">00:00</span><small class="b-tip">（點右側任一句可即時校準）</small></div>
 <p class="hint" id="s-hint"></p><p class="hint" id="s-src" hidden></p><div id="s-side"></div></div>
 <div class="svr" id="s-tl"></div></div>
 <div class="tm" role="group" aria-label="對時"><span id="tm-st"></span><button id="tm-mk" type="button">標記<kbd>Space</kbd></button><button id="tm-un" type="button">復原</button><button id="tm-ex" type="button">匯出</button><button id="tm-rs" type="button">重設本曲</button></div>
@@ -459,9 +467,17 @@ function switchSource(idx,init){
     $('#s-yt').href='https://www.bilibili.com/video/'+sc.id;
     $('#s-yt').textContent='在 B 站觀看 ↗';
     $('#cc').hidden=true;$('#cc-no').hidden=false;
-    $('#cc-no').textContent='B 站現場版（點擊歌詞定位高亮）';
+    $('#cc-no').textContent='B 站現場版';
     fb.hidden=true;
+    $('#b-sync').hidden=false;
+    biliRunning=false;biliCurrentTime=0;
+    var bBtn=$('#b-sync-btn'),bTime=$('#b-sync-time');
+    if(bBtn){bBtn.textContent='▶ 開始同步';bBtn.classList.remove('active')}
+    if(bTime)bTime.textContent='0:00';
+    updateBiliUi();
   }else{
+    $('#b-sync').hidden=true;
+    biliRunning=false;
     bp.hidden=true;bp.src='';ytel.hidden=false;
     $('#s-yt').href=fb.href='https://www.youtube.com/watch?v='+sc.id;
     $('#s-yt').textContent='在 YouTube 觀看 ↗';
@@ -687,7 +703,23 @@ function fetchLy(cs){var errs=[];
   return cs.reduce(function(p,c){return p.then(function(r){return r||c.src.lyrics(c).then(function(l){if(lrc(l.j).length)return {c:c,l:l};errs.push(c.src.name+' #'+c.id+'：沒有歌詞')},
     function(e){errs.push(c.src.name+' #'+c.id+'：'+msg(e))})})},Promise.resolve()).then(function(r){return r||Promise.reject(errs)})}
 function st(s){$('#ly-st').textContent=s}
-function mmss(d){return d?Math.floor(d/60)+':'+String(Math.round(d%60)).padStart(2,'0'):''}
+function mmss(d){return d!=null&&!isNaN(d)?Math.floor(d/60)+':'+String(Math.round(d%60)).padStart(2,'0'):'0:00'}
+
+var biliRunning=false,biliStartPerf=0,biliCurrentTime=0,biliSyncOn=true;
+function updateBiliUi(){
+  var on=$('#b-sync-on').checked;
+  biliSyncOn=on;
+  $('#b-sync-btn').hidden=!on;
+  $('#b-sync-rst').hidden=!on;
+  $('#b-sync-time').hidden=!on;
+  var tip=$('#b-sync .b-tip');
+  if(tip)tip.textContent=on?'（點右側任一句可即時校準）':'（手動對照模式：點擊任意句置中）';
+  if(!on&&biliRunning){
+    biliRunning=false;
+    var b=$('#b-sync-btn');
+    if(b){b.textContent='▶ 開始同步';b.classList.remove('active')}
+  }
+}
 
 // first timed line at or after l in the timeline (a section heading's time)
 function nxt(l){var q=[].slice.call($('#s-tl').querySelectorAll('.sec,.d-r,.d-c li')),i=-1;q.slice(q.indexOf(l)).some(function(x){var j=lines.indexOf(x);return j>=0&&E[j]!=null&&(i=j,1)});return i}
@@ -702,6 +734,11 @@ function pick(l){
     act=i;paint();
     if(sc&&sc.type==='bili'){
       lines[i].scrollIntoView({block:'center',behavior:'smooth'});
+      if(biliSyncOn&&E[i]!=null){
+        biliCurrentTime=E[i];
+        biliStartPerf=performance.now();
+        $('#b-sync-time').textContent=mmss(Math.max(0,biliCurrentTime));
+      }
     }else if(E[i]!=null&&ready&&P){
       P.seekTo(E[i],true);P.playVideo();
     }
@@ -709,14 +746,46 @@ function pick(l){
 }
 
 setInterval(function(){
-  if(!ready||document.body.dataset.v!='song')return;
+  if(document.body.dataset.v!='song')return;
   var s=S[cur-1],sc=s&&s.srcs&&s.srcs[curSrcIdx];
-  if(sc&&sc.type==='bili')return;
-  var t=P.getCurrentTime()+.15,a=-1,l=-1,d=LY[cur];E.forEach(function(x,i){if(x!=null&&x<=t&&(a<0||x>E[a]||x==E[a]&&rk[i]>rk[a]))a=i;if(i>=nc&&i<nc+nl&&x!=null&&x<=t&&(l<0||x>=E[l]))l=i});
+  var t;
+  if(sc&&sc.type==='bili'){
+    if(!biliSyncOn||!biliRunning)return;
+    t=(performance.now()-biliStartPerf)/1000+biliCurrentTime;
+    $('#b-sync-time').textContent=mmss(Math.max(0,Math.floor(t)));
+  }else{
+    if(!ready||!P||typeof P.getCurrentTime!=='function')return;
+    t=P.getCurrentTime()+.15;
+  }
+  var a=-1,l=-1,d=LY[cur];E.forEach(function(x,i){if(x!=null&&x<=t&&(a<0||x>E[a]||x==E[a]&&rk[i]>rk[a]))a=i;if(i>=nc&&i<nc+nl&&x!=null&&x<=t&&(l<0||x>=E[l]))l=i});
   if(a!=act){act=a;paint();if(a>=0&&$('#o-as').checked)lines[a].scrollIntoView({block:'center',behavior:'smooth'})}
   if(S[cur-1].cc||!d||l>=0&&t-E[l]>10)l=-1;  // no official captions: current lyric line on the video, gone after 10 s
   if(l!=SB){SB=l;$('#sub').hidden=l<0;if(l>=0){$('#sub .j').textContent=d.j[l-nc];$('#sub .z').textContent=tw(d.z[l-nc])}}
 },200);
+$('#b-sync-on').addEventListener('change',updateBiliUi);
+$('#b-sync-btn').addEventListener('click',function(){
+  if(biliRunning){
+    biliCurrentTime+=(performance.now()-biliStartPerf)/1000;
+    biliRunning=false;
+    this.textContent='▶ 繼續同步';
+    this.classList.remove('active');
+  }else{
+    biliRunning=true;
+    biliStartPerf=performance.now();
+    this.textContent='⏸ 暫停同步';
+    this.classList.add('active');
+  }
+});
+$('#b-sync-rst').addEventListener('click',function(){
+  biliCurrentTime=0;
+  biliStartPerf=performance.now();
+  $('#b-sync-time').textContent='0:00';
+  act=-1;paint();
+  if(!biliRunning){
+    var b=$('#b-sync-btn');
+    if(b){b.textContent='▶ 開始同步';b.classList.remove('active')}
+  }
+});
 $('#s-tl').addEventListener('click',function(e){var l=e.target.closest('.d-c li,.d-r,.sec');if(l)pick(l)});
 $('#s-tl').addEventListener('keydown',function(e){if(e.key=='Enter'&&e.target.matches('.d-r,.d-c li'))pick(e.target)});  // .sec is a button: Enter clicks it
 $('#o-tm').addEventListener('change',paint);
